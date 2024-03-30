@@ -43,7 +43,7 @@ var judgeText = document.getElementsByClassName("play_data_detail_judge_text");
 for (var i = 1; i < 4; i++) {
   judgeText.item(i).style.width = "120px";
   judgeText.item(i).style.textAlign = "left";
-  judgeText.item(i).style.fontSize = "0.72rem";
+  judgeText.item(i).style.fontSize = "0.75rem";
 }
 var amountJust = ((just * 0.01) / maxCombo) * 1000000;
 console.log(amountJust);
