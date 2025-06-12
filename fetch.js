@@ -45,7 +45,7 @@ for (var i = 1; i < 4; i++) {
   judgeText.item(i).style.textAlign = "left";
   judgeText.item(i).style.fontSize = "0.8rem";
 }
-var amountJust = ((just * 0.99) / maxCombo) * 1000000;
+var amountJust = ((just * 0.01) / maxCombo) * 1000000;
 console.log(amountJust);
 document.getElementsByClassName("text_justice").item(0).innerHTML =
   just + " (-" + Math.round(amountJust) + ")";
