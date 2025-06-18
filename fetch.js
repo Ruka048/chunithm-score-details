@@ -49,7 +49,7 @@ var amountJust = ((just * 0.01) / maxCombo) * 1000000;
 console.log(amountJust);
 document.getElementsByClassName("text_justice").item(0).innerHTML =
   just + " (-" + Math.round(amountJust) + ")";
-var amountAtk = ((atk * 0.505) / maxCombo) * 1000000; //cal atk amount
+var amountAtk = ((atk * 0.51) / maxCombo) * 1000000; //cal atk amount
 console.log(amountAtk);
 document.getElementsByClassName("text_attack").item(0).innerHTML =
   atk + " (-" + Math.round(amountAtk) + ")";
