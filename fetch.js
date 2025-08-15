@@ -1,60 +1,62 @@
-var score = parseInt(
+// Extract values and parse integers/floats robustly
+const score = parseInt(
   document
-    .getElementsByClassName("play_musicdata_score_text")
-    .item(0)
-    .innerHTML.replaceAll(",", "")
+    .querySelector(".play_musicdata_score_text")
+    .textContent
+    .replaceAll(",", ""),
+  10
 );
-console.log("score: " + score);
-var crit = parseFloat(
-  document
-    .getElementsByClassName("text_critical")
-    .item(0)
-    .innerHTML.replace(",", "")
-);
-console.log("critical justice: " + crit);
-var just = parseFloat(
-  document
-    .getElementsByClassName("text_justice")
-    .item(0)
-    .innerHTML.replace(",", "")
-);
-console.log("justice: " + just);
-var atk = parseFloat(
-  document
-    .getElementsByClassName("text_attack")
-    .item(0)
-    .innerHTML.replace(",", "")
-);
-console.log("attack: " + atk);
-var miss = parseFloat(
-  document
-    .getElementsByClassName("text_miss")
-    .item(0)
-    .innerHTML.replace(",", "")
-);
-console.log("miss: " + miss);
 
-var maxCombo = crit + just + atk + miss;
-var judgeBlock = document
-  .getElementsByClassName("play_data_detail_judge_block")
-  .item(0);
-judgeBlock.style.paddingLeft = "115px";
-var judgeText = document.getElementsByClassName("play_data_detail_judge_text");
-for (var i = 1; i < 4; i++) {
-  judgeText.item(i).style.width = "120px";
-  judgeText.item(i).style.textAlign = "left";
-  judgeText.item(i).style.fontSize = "0.8rem";
-}
-var amountJust = ((just * 0.01) / maxCombo) * 1000000;
-console.log(amountJust);
-document.getElementsByClassName("text_justice").item(0).innerHTML =
-  just + " (-" + Math.round(amountJust) + ")";
-var amountAtk = ((atk * 0.51) / maxCombo) * 1000000; //cal atk amount
-console.log(amountAtk);
-document.getElementsByClassName("text_attack").item(0).innerHTML =
-  atk + " (-" + Math.round(amountAtk) + ")";
-var amountMiss =
-  1010000 - score - Math.round(amountAtk) - Math.round(amountJust);
-console.log(amountMiss);
-document.getElementsByClassName("text_miss").item(0).innerHTML =
-  miss + " (-" + Math.round(amountMiss) + ")";
+const jcrit = parseFloat(
+  document.querySelector(".text_critical").textContent.replaceAll(",", "")
+);
+const justice = parseFloat(
+  document.querySelector(".text_justice").textContent.replaceAll(",", "")
+);
+const attack = parseFloat(
+  document.querySelector(".text_attack").textContent.replaceAll(",", "")
+);
+const miss = parseFloat(
+  document.querySelector(".text_miss").textContent.replaceAll(",", "")
+);
+
+console.log({ score, jcrit, justice, attack, miss });
+
+// Total notes
+const totalNotes = jcrit + justice + attack + miss;
+
+// Calculate accuracy percentage
+const accuracy = (
+  (jcrit * 1.01 +
+    justice * 1.00 +
+    attack * 0.50 +
+    0 * miss) /
+  totalNotes
+);
+
+// Compute theoretical score (max 1,010,000)
+const computedScore = accuracy * 10000;
+
+// Calculate point gaps between actual score and perfect (1,010,000)
+const PERFECT_SCORE = 1010000; // Ideally from game metadata
+const gap = PERFECT_SCORE - score;
+
+// Distribute gap proportionally to judgment "loss" costs
+const lossPerJustice = (1.00 - 1.01) / totalNotes * 10000; // negative
+const lossPerAttack = (0.50 - 1.00) / totalNotes * 10000;
+const lossPerMiss = (0 - 1.00) / totalNotes * 10000;
+
+const lostJustice = justice * lossPerJustice;
+const lostAttack = attack * lossPerAttack;
+const lostMiss = miss * lossPerMiss;
+
+// Update UI with clarity
+document.querySelector(".text_justice").textContent =
+  `${justice} (–${Math.round(Math.abs(lostJustice))})`;
+document.querySelector(".text_attack").textContent =
+  `${attack} (–${Math.round(Math.abs(lostAttack))})`;
+document.querySelector(".text_miss").textContent =
+  `${miss} (–${Math.round(Math.abs(lostMiss))})`;
+
+// Optionally log calculations
+console.log({ computedScore, gap, lostJustice, lostAttack, lostMiss });
