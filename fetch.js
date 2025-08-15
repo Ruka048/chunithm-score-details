@@ -50,6 +50,43 @@ const lostJustice = justice * lossPerJustice;
 const lostAttack = attack * lossPerAttack;
 const lostMiss = miss * lossPerMiss;
 
+// Dữ liệu cho biểu đồ
+const ctx = document.getElementById('lossChart').getContext('2d');
+const lossChart = new Chart(ctx, {
+  type: 'bar', // Có thể đổi thành 'pie' nếu muốn
+  data: {
+    labels: ['Justice', 'Attack', 'Miss'],
+    datasets: [{
+      label: 'Điểm bị mất',
+      data: [
+        Math.round(Math.abs(lostJustice)),
+        Math.round(Math.abs(lostAttack)),
+        Math.round(Math.abs(lostMiss))
+      ],
+      backgroundColor: ['#4caf50', '#ff9800', '#f44336']
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            return context.raw + ' điểm';
+          }
+        }
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: { display: true, text: 'Điểm mất' }
+      }
+    }
+  }
+});
+
 // Update UI with clarity
 document.querySelector(".text_justice").textContent =
   `${justice} (–${Math.round(Math.abs(lostJustice))})`;
