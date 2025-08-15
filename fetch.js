@@ -48,36 +48,46 @@ waitForElement(".play_data_detail_block", function(detailBlock) {
   updateJudgeText(".text_attack", atk, amountAtk);
   updateJudgeText(".text_miss", miss, amountMiss);
 
-  // ======= INSERT CANVAS AFTER TARGET BLOCK =======
+  // ======= CREATE CHART CONTAINER (CENTERED) =======
+  const chartWrapper = document.createElement("div");
+  chartWrapper.style.display = "flex";
+  chartWrapper.style.justifyContent = "center";
+  chartWrapper.style.marginTop = "20px";
+
   const chartContainer = document.createElement("div");
   chartContainer.style.width = "300px";
-  chartContainer.style.marginTop = "20px";
-  chartContainer.innerHTML = `<canvas id="lossChart"></canvas>`;
-  detailBlock.parentNode.insertBefore(chartContainer, detailBlock.nextSibling);
+  chartContainer.innerHTML = `<canvas id="lossChart" style="cursor:pointer;"></canvas>`;
+
+  chartWrapper.appendChild(chartContainer);
+  detailBlock.parentNode.insertBefore(chartWrapper, detailBlock.nextSibling);
 
   // ======= LOAD CHART.JS AND DRAW =======
   const chartScript = document.createElement("script");
   chartScript.src = "https://cdn.jsdelivr.net/npm/chart.js";
   chartScript.onload = function() {
     const ctx = document.getElementById("lossChart").getContext("2d");
-    new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: ['Justice', 'Attack', 'Miss'],
-        datasets: [{
-          label: 'Score Lost',
-          data: [
-            Math.round(amountJust),
-            Math.round(amountAtk),
-            Math.round(amountMiss)
-          ],
-          backgroundColor: ['#ff9800', '#4caf50', '#9e9e9e'] // New colors
-        }]
-      },
+
+    const chartData = {
+      labels: ['Justice', 'Attack', 'Miss'],
+      datasets: [{
+        label: 'Score Lost',
+        data: [
+          Math.round(amountJust),
+          Math.round(amountAtk),
+          Math.round(amountMiss)
+        ],
+        backgroundColor: ['#ff9800', '#4caf50', '#9e9e9e']
+      }]
+    };
+
+    let chartType = 'bar';
+    let lossChart = new Chart(ctx, {
+      type: chartType,
+      data: chartData,
       options: {
         responsive: true,
         plugins: {
-          legend: { display: false },
+          legend: { display: chartType === 'pie' },
           tooltip: {
             callbacks: {
               label: function (context) {
@@ -86,13 +96,36 @@ waitForElement(".play_data_detail_block", function(detailBlock) {
             }
           }
         },
-        scales: {
-          y: {
-            beginAtZero: true,
-            title: { display: true, text: 'Points Lost' }
-          }
-        }
+        scales: chartType === 'bar' ? {
+          y: { beginAtZero: true, title: { display: true, text: 'Points Lost' } }
+        } : {}
       }
+    });
+
+    // Toggle between bar and pie chart on click
+    document.getElementById("lossChart").addEventListener("click", function() {
+      chartType = (chartType === 'bar') ? 'pie' : 'bar';
+      lossChart.destroy();
+      lossChart = new Chart(ctx, {
+        type: chartType,
+        data: chartData,
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: chartType === 'pie' },
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  return context.raw + ' points';
+                }
+              }
+            }
+          },
+          scales: chartType === 'bar' ? {
+            y: { beginAtZero: true, title: { display: true, text: 'Points Lost' } }
+          } : {}
+        }
+      });
     });
   };
   document.body.appendChild(chartScript);
