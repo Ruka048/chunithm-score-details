@@ -36,16 +36,16 @@ waitForElement(".play_data_detail_block", async function(detailBlock) {
   const amountMiss = 1010000 - score - Math.round(amountAtk) - Math.round(amountJust);
 
   // ===== UPDATE TEXT IN UI (small loss text) =====
- function updateJudgeText(selector, value, loss) {
-  const el = document.querySelector(selector);
-  if (el) {
-    el.innerHTML = `
-      <span style="font-size:14px;">${value}</span>
-      <span style="font-size:13px; color:#888; display:inline-block;">(-${Math.round(loss)})</span>
-    `;
-    el.style.whiteSpace = "nowrap";
+  function updateJudgeText(selector, value, loss) {
+    const el = document.querySelector(selector);
+    if (el) {
+      el.innerHTML = `
+        <span style="font-size:14px;">${value}</span>
+        <span style="font-size:13px; color:#888; display:inline-block;">(-${Math.round(loss)})</span>
+      `;
+      el.style.whiteSpace = "nowrap";
+    }
   }
-}
   updateJudgeText(".text_justice", just, amountJust);
   updateJudgeText(".text_attack", atk, amountAtk);
   updateJudgeText(".text_miss", miss, amountMiss);
@@ -77,20 +77,22 @@ waitForElement(".play_data_detail_block", async function(detailBlock) {
     }
   }
 
-  // ===== CALCULATE PLAY RATING (no rank) =====
+  // ===== CALCULATE PLAY RATING (matches table) =====
   let playRating = null;
   if (chartConst) {
     let rate = 0;
-    if (score >= 975000 && score < 990000) {
-      rate = chartConst + ((score - 975000) / 250) * 0.01;
-    } else if (score < 1000000) {
-      rate = chartConst + ((score - 990000) / 250) * 0.01 + 0.6;
-    } else if (score < 1005000) {
-      rate = chartConst + ((score - 1000000) / 100) * 0.01 + 1;
-    } else if (score < 1007500) {
-      rate = chartConst + ((score - 1005000) / 50) * 0.01 + 1.5;
-    } else {
-      rate = chartConst + ((score - 1007500) / 100) * 0.01 + 2;
+    if (score >= 975000 && score <= 989999) { // S.
+      rate = chartConst + ((score - 975000) / 2500) * 0.1;
+    } else if (score >= 990000 && score <= 999999) { // S+
+      rate = chartConst + ((score - 990000) / 2500) * 0.1 + 0.6;
+    } else if (score >= 1000000 && score <= 1004999) { // SS
+      rate = chartConst + ((score - 1000000) / 1000) * 0.1 + 1.0;
+    } else if (score >= 1005000 && score <= 1007499) { // SS+
+      rate = chartConst + ((score - 1005000) / 500) * 0.1 + 1.5;
+    } else if (score >= 1007500 && score <= 1008999) { // SSS
+      rate = chartConst + ((score - 1007500) / 100) * 0.01 + 2.0;
+    } else if (score >= 1009000) { // SSS+
+      rate = chartConst + 2.4; // max
     }
     playRating = rate;
   }
@@ -108,10 +110,11 @@ waitForElement(".play_data_detail_block", async function(detailBlock) {
 
   chartWrapper.appendChild(chartContainer);
 
-  // Play Rating text
+  // Play Rating text (truncate, not round)
   if (playRating !== null) {
     const ratingText = document.createElement("div");
-    ratingText.textContent = `Play Rating: ${playRating.toFixed(2)} (Chart Const: ${chartConst})`;
+    const truncatedRating = Math.floor(playRating * 100) / 100; // truncate instead of round
+    ratingText.textContent = `Play Rating: ${truncatedRating.toFixed(2)} (Chart Const: ${chartConst})`;
     ratingText.style.fontFamily = '"ヒラギノ角ゴ Pro W3", sans-serif';
     ratingText.style.fontSize = "16px";
     ratingText.style.marginTop = "8px";
