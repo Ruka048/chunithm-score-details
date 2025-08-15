@@ -50,43 +50,6 @@ const lostJustice = justice * lossPerJustice;
 const lostAttack = attack * lossPerAttack;
 const lostMiss = miss * lossPerMiss;
 
-// Dữ liệu cho biểu đồ
-const ctx = document.getElementById('lossChart').getContext('2d');
-const lossChart = new Chart(ctx, {
-  type: 'bar', // Có thể đổi thành 'pie' nếu muốn
-  data: {
-    labels: ['Justice', 'Attack', 'Miss'],
-    datasets: [{
-      label: 'Điểm bị mất',
-      data: [
-        Math.round(Math.abs(lostJustice)),
-        Math.round(Math.abs(lostAttack)),
-        Math.round(Math.abs(lostMiss))
-      ],
-      backgroundColor: ['#4caf50', '#ff9800', '#f44336']
-    }]
-  },
-  options: {
-    responsive: true,
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        callbacks: {
-          label: function(context) {
-            return context.raw + ' điểm';
-          }
-        }
-      }
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        title: { display: true, text: 'Điểm mất' }
-      }
-    }
-  }
-});
-
 // Update UI with clarity
 document.querySelector(".text_justice").textContent =
   `${justice} (–${Math.round(Math.abs(lostJustice))})`;
@@ -97,3 +60,55 @@ document.querySelector(".text_miss").textContent =
 
 // Optionally log calculations
 console.log({ computedScore, gap, lostJustice, lostAttack, lostMiss });
+const chartContainer = document.createElement("div");
+chartContainer.style.width = "300px";
+chartContainer.style.marginTop = "20px";
+chartContainer.innerHTML = `<canvas id="lossChart"></canvas>`;
+
+// Tìm vị trí div play_data_detail_block và chèn phía sau
+const detailBlock = document.querySelector(".play_data_detail_block");
+if (detailBlock && detailBlock.parentNode) {
+  detailBlock.parentNode.insertBefore(chartContainer, detailBlock.nextSibling);
+}
+
+// Nạp Chart.js từ CDN và vẽ biểu đồ khi sẵn sàng
+const chartScript = document.createElement("script");
+chartScript.src = "https://cdn.jsdelivr.net/npm/chart.js";
+chartScript.onload = function () {
+  const ctx = document.getElementById("lossChart").getContext("2d");
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Justice', 'Attack', 'Miss'],
+      datasets: [{
+        label: 'Điểm bị mất',
+        data: [
+          Math.round(amountJust),
+          Math.round(amountAtk),
+          Math.round(amountMiss)
+        ],
+        backgroundColor: ['#4caf50', '#ff9800', '#f44336']
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function (context) {
+              return context.raw + ' điểm';
+            }
+          }
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: { display: true, text: 'Điểm mất' }
+        }
+      }
+    }
+  });
+};
+document.body.appendChild(chartScript);
