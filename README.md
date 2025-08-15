@@ -13,16 +13,14 @@ Calculates and displays Play Rating using official chart constants from otoge-db
 
 Clean, centered layout with optimized font sizes for better readability.
 
-📌 Installation as Bookmarklet
+📌 **Installation as Bookmarklet**
 
-Copy the bookmarklet code from fetch.js or your minified script.
+1. **Create a new bookmark** in your browser.
+2. **Copy the following code** and paste it into the URL or Location field of the bookmark:
 
-Create a new bookmark in your browser.
-
-Paste the bookmarklet code into the URL field.
-
-Save the bookmark.
-
+```javascript
+javascript:(function(){var s=document.createElement('script');s.src='https://ruka048.github.io/chunithm-score-details/fetch.js';document.body.appendChild(s);}());
+```
 🚀 Usage
 
 Open any CHUNITHM NET play result page.
@@ -36,3 +34,4 @@ Show reduced font size loss values next to each judge count.
 Add an interactive chart of points lost.
 
 Display your calculated Play Rating under the chart.
+
