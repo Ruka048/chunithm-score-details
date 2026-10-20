@@ -79,14 +79,21 @@
   th { color: var(--muted); font-weight: 600; font-size: 0.92rem; }
   td:first-child { font-weight: 700; }
 
-  .code { position: relative; margin: 14px 0; }
-  pre {
-    margin: 0;
+  .code {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 14px 0;
+    padding: 10px 12px 10px 0;
     background: var(--panel);
     border: 1px solid var(--line);
     border-radius: 6px;
-    padding: 16px;
-    padding-right: 90px;
+  }
+  pre {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    padding: 6px 4px 6px 16px;
     overflow-x: auto;
     font-family: var(--mono);
     font-size: 0.85rem;
@@ -94,11 +101,15 @@
     white-space: pre;
   }
   .copy {
-    position: absolute; top: 10px; right: 10px;
+    flex: none;
     background: transparent; color: var(--text);
     border: 1px solid var(--line); border-radius: 4px;
-    font: inherit; font-size: 0.85rem; padding: 4px 12px; cursor: pointer;
+    width: 36px; height: 36px; padding: 0; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
   }
+  .copy svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .copy.done { color: var(--a); border-color: var(--a); }
+  .copy.fail { color: var(--j); border-color: var(--j); }
   .copy:hover { border-color: var(--jc); }
 
   footer { max-width: 720px; margin: 0 auto; padding: 24px 20px 56px; color: var(--muted); font-size: 0.92rem; border-top: 1px solid var(--line); }
@@ -128,7 +139,7 @@
     <li><strong>Play Rating.</strong> Calculated with chart constants from <a href="https://otoge-db.net/chunithm/">otoge-db.net</a>.</li>
     <li><strong>Clean layout.</strong> A centered chart and compact loss text that don’t clutter the result screen.</li>
   </ul>
-
+  
   <h2>Installation</h2>
   <ol>
     <li>Create a new bookmark in your browser.</li>
@@ -137,7 +148,7 @@
   </ol>
   <div class="code">
     <pre id="code">javascript:(function(){var s=document.createElement('script');s.src='https://ruka048.github.io/chunithm-score-details/fetch.js';document.body.appendChild(s);}());</pre>
-    <button class="copy" type="button" id="copy">Copy</button>
+    <button class="copy" type="button" id="copy" aria-label="Copy code" title="Copy code"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button>
   </div>
   <p class="hint">Or skip the copy and paste: drag the yellow button above to your bookmarks bar.</p>
 
@@ -170,15 +181,33 @@
 
 <script>
   var btn = document.getElementById("copy");
+  var ICON_COPY = btn.innerHTML;
+  var ICON_DONE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+  var ICON_FAIL = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+
+  function show(icon, cls, label) {
+    btn.innerHTML = icon;
+    btn.className = "copy " + cls;
+    btn.setAttribute("aria-label", label);
+    btn.title = label;
+    setTimeout(function () {
+      btn.innerHTML = ICON_COPY;
+      btn.className = "copy";
+      btn.setAttribute("aria-label", "Copy code");
+      btn.title = "Copy code";
+    }, 1800);
+  }
+
   btn.addEventListener("click", function () {
     var text = document.getElementById("code").textContent;
     try {
       navigator.clipboard.writeText(text).then(function () {
-        btn.textContent = "Copied";
-        setTimeout(function () { btn.textContent = "Copy"; }, 1800);
-      }, function () { btn.textContent = "Copy failed"; });
+        show(ICON_DONE, "done", "Copied");
+      }, function () {
+        show(ICON_FAIL, "fail", "Copy failed");
+      });
     } catch (e) {
-      btn.textContent = "Copy failed";
+      show(ICON_FAIL, "fail", "Copy failed");
     }
   });
 </script>
