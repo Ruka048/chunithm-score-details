@@ -1,37 +1,40 @@
-
 # Chunithm Score Details
 
-A userscript/bookmarklet that adds score breakdown, loss chart, and play rating calculation to the CHUNITHM NET play result page.
+A bookmarklet that adds a score breakdown, an interactive loss chart, and a Play Rating calculation to the **CHUNITHM NET** play result page.
 
-✨ Features
+## Features
 
-Shows point loss from Justice, Attack, and Miss directly in the result screen.
+- **Score loss per judgement**: shows how many points you lost to Justice, Attack, and Miss, right next to each judgement count.
+- **Loss chart**: an interactive bar chart of points lost. Click it to switch to a pie chart, and click again to switch back.
+- **Play Rating**: calculates the rating of the play using chart constants from [otoge-db.net](https://otoge-db.net/chunithm/).
+- **Clean layout**: a centered chart and compact loss text that don't clutter the result screen.
 
-Adds an interactive bar/pie chart of score loss (click to toggle).
+## Installation
 
-Calculates and displays Play Rating using official chart constants from otoge-db.net.
-
-Clean, centered layout with optimized font sizes for better readability.
-
-📌 **Installation as Bookmarklet**
-
-1. **Create a new bookmark** in your browser.
-2. **Copy the following code** and paste it into the URL or Location field of the bookmark:
+1. Create a new bookmark in your browser.
+2. Name it `Chunithm Score Details`.
+3. Paste the following code into the **URL** (or **Location**) field of the bookmark:
 
 ```javascript
 javascript:(function(){var s=document.createElement('script');s.src='https://ruka048.github.io/chunithm-score-details/fetch.js';document.body.appendChild(s);}());
 ```
-🚀 Usage
 
-Open any CHUNITHM NET play result page.
+## Usage
 
-Click your saved "Chunithm Score Details" bookmark.
+1. Log in to CHUNITHM NET and open any play result page.
+2. Click the `Chunithm Score Details` bookmark.
+3. The script will:
+   - Show the points lost next to the Justice, Attack, and Miss counts.
+   - Add an interactive chart of points lost below the result details.
+   - Display your calculated Play Rating under the chart, along with the chart constant used.
 
-The script will:
+## Notes
 
-Show reduced font size loss values next to each judge count.
+- An internet connection is required, because chart constants are fetched from otoge-db.net.
+- The Play Rating is shown only for Expert, Master, and Ultima charts that can be found in the database. If a song is not found, the loss values and chart are still displayed.
+- WORLD'S END charts have no chart constant, so no Play Rating is shown for them.
+- Songs are matched by title, so songs that share the same title may occasionally show the wrong chart constant.
 
-Add an interactive chart of points lost.
+## Disclaimer
 
-Display your calculated Play Rating under the chart.
-
+This is an unofficial fan-made tool. It is not affiliated with or endorsed by SEGA. Use it at your own risk.
